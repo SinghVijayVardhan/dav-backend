@@ -1,0 +1,5 @@
+CREATE TABLE IF NOT EXISTS configuration (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    type VARCHAR(255) NOT NULL,
+    data JSON NOT NULL
+);
