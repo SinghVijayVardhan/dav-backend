@@ -4,6 +4,7 @@ import io.jsonwebtoken.ExpiredJwtException;
 import org.dav.modals.UserClaim;
 import org.dav.services.JwtService;
 import org.dav.services.UserService;
+import org.dav.utils.CurrentThread;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -47,6 +48,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
                     SecurityContextHolder.getContext().setAuthentication(authToken);
+                    CurrentThread.setId(user.getUserId());
+                    CurrentThread.setEmail(user.getEmail());
                 }
             }
         } catch (ExpiredJwtException e) {

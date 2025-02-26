@@ -5,7 +5,7 @@ import lombok.*;
 import org.dav.enums.FineStatus;
 
 
-import java.util.Date;
+import java.time.LocalDate;
 
 @Entity(name = "loans")
 @NoArgsConstructor
@@ -28,13 +28,13 @@ public class Loan {
     private Book book;
 
     @Column(name = "issue_date")
-    private Date issueDate;
+    private LocalDate issueDate;
 
     @Column(name = "due_date")
-    private Date dueDate;
+    private LocalDate dueDate;
 
     @Column(name = "return_date")
-    private Date return_date;
+    private LocalDate returnDate;
 
     @Column(name = "fine_amount")
     private Double fineAmount;

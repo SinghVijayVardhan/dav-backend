@@ -1,0 +1,1 @@
+INSERT INTO configuration (type, data) VALUES ('LIBRARY_ISSUE_CONFIG', '{\"finePerDay\" : 0, \"maxNumberOfDays\" : 10, \"maxNumberOfBooks\" : 5}');

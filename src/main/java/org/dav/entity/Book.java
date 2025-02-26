@@ -24,4 +24,6 @@ public class Book {
     private Integer publicationYear;
     @Column(name = "total_copies")
     private Integer totalCopies = 1;
+    @Column(name = "remaining_copies")
+    private Integer availableCopies;
 }

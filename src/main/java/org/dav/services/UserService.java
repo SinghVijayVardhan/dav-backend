@@ -12,6 +12,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Slf4j
@@ -62,4 +64,19 @@ public class UserService implements UserDetailsService {
         return userClaim;
     }
 
+    public User getUserById(Integer id) {
+        Optional<User> user = userRepository.findById(id);
+        if(user.isEmpty()){
+            throw new UserNotFoundException("User not found");
+        }
+        return user.get();
+    }
+
+
+    public List<User> getUsersWithProvidedName(String name) {
+        if(name.isEmpty() || name.isBlank())
+            return new ArrayList<>();
+        name = "%"+name+"%";
+        return userRepository.findAllByName(name);
+    }
 }

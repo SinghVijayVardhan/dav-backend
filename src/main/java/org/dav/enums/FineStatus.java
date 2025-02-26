@@ -1,5 +1,5 @@
 package org.dav.enums;
 
 public enum FineStatus {
-    paid, unpaid, levied
+    paid, unpaid, levied, none
 }
