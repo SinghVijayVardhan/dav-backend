@@ -1,8 +1,8 @@
 package org.dav.utils;
 
 public class CurrentThread {
-    private static ThreadLocal<String> email;
-    private static ThreadLocal<Integer> id;
+    private static ThreadLocal<String> email = new ThreadLocal<String>();
+    private static ThreadLocal<Integer> id = new ThreadLocal<Integer>();
 
     public static void setEmail(String email){
         CurrentThread.email.set(email);

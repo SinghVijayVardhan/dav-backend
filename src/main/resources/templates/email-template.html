@@ -1,0 +1,79 @@
+<html>
+<head>
+    <style type="text/css">
+        .email-wrapper {
+            max-width: 600px;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+            text-align: left;
+            position: relative;
+            margin: auto;
+        }
+        .footer {
+            text-align: center;
+            font-size: 12px;
+            margin-top: 10px;
+            color: #555; /* Darker text for visibility */
+            font-weight: bold;
+        }
+        .background {
+            background: url('cid:backgroundImage') no-repeat center;
+            background-size: cover;
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+        .content {
+            position: relative;
+            z-index: 5;
+            padding: 25px;
+            background: rgba(255, 255, 255, 0.8); /* Semi-transparent white */
+            border-radius: 10px;
+            border: 1px solid #ccc; /* Subtle border */
+        }
+        p {
+            font-size: 14px;
+            font-weight: bold; /* Improves readability */
+            color: #222; /* Darker text */
+        }
+        strong {
+            font-size: 16px;
+            color: #000; /* Bolder for headers */
+        }
+    </style>
+</head>
+<body>
+<table width="100%" height="100%" cellpadding="0" cellspacing="0">
+    <tr>
+        <td align="center">
+            <table class="email-wrapper" width="600" cellpadding="0" cellspacing="0">
+                <tr>
+                    <td class="background">
+                        <div class="content">
+                            <p><strong>Greetings, {{userFirstName}},</strong></p>
+                            <div style="margin-left: 20px;">
+                                <p>You have issued a book.</p>
+                                <p><strong>📚 Borrow Details:</strong></p>
+                                <div style="margin-left: 40px;">
+                                    <p><strong>Book Name:</strong> {{bookName}}</p>
+                                    <p><strong>Issued Date:</strong> {{issueDate}}</p>
+                                    <p><strong>Due Date:</strong> {{dueDate}}</p>
+                                </div>
+                            </div>
+                            <p>Regards,</p>
+                            <p><strong>Library Department</strong></p>
+                            <p><strong>Dav Bokaro</strong></p>
+                            <p style="color: red; font-size: 12px;"><strong>Please do not reply to this auto-generated email.</strong></p>
+                            <div class="footer">
+                                &copy; 2025 Library System. All rights reserved.
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>
+</body>
+</html>
