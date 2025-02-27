@@ -25,8 +25,8 @@ public class BookController {
     }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public PageResponse<? extends BookDto> getBook(@RequestParam(value = "name", required = false) String name,@RequestParam("page") Integer page, @RequestParam("size") Integer size){
-        return bookService.getPaginatedBookResponse(name,page,size);
+    public PageResponse<? extends BookDto> getBook(@RequestParam(value = "title", required = false) String name,@RequestParam("page") Integer page, @RequestParam("size") Integer size, @RequestParam(value = "category", required = false) String category){
+        return bookService.getPaginatedBookResponse(name,page,size,category);
     }
 
     @Secured({ConfigurationKey.ROLE_LIBRARIAN})
@@ -41,5 +41,11 @@ public class BookController {
     public ResponseEntity<String> deleteBook(@PathVariable Integer id) {
         bookService.deleteBook(id);
         return ResponseEntity.ok("Book deleted successfully");
+    }
+
+    @GetMapping("/categories")
+    public ResponseEntity<List<String>> getCategories(){
+        List<String> categories = bookService.getCategories();
+        return ResponseEntity.ok(categories);
     }
 }

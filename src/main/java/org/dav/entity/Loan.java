@@ -1,5 +1,6 @@
 package org.dav.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.*;
 import org.dav.enums.FineStatus;
@@ -27,12 +28,15 @@ public class Loan {
     @JoinColumn(name = "book_id", nullable = false)
     private Book book;
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     @Column(name = "issue_date")
     private LocalDate issueDate;
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     @Column(name = "due_date")
     private LocalDate dueDate;
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     @Column(name = "return_date")
     private LocalDate returnDate;
 

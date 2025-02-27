@@ -35,6 +35,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
         try {
+            CurrentThread.clear();
             String jwt = extractToken(request);
             if (StringUtils.hasText(jwt) && SecurityContextHolder.getContext().getAuthentication() == null) {
                 String username = jwtService.extractUserName(jwt);
@@ -59,7 +60,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid Token");
             return;
         }
-
         filterChain.doFilter(request, response);
     }
 

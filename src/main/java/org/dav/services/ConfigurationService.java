@@ -61,7 +61,7 @@ public class ConfigurationService {
 
     public void sendEmail() {
         User user = User.builder().email("vijoybardhan3@gmail.com").firstname("Vijay").build();
-        Book book = new Book(1,"Java Programming","Vijay Vardhan",2021,5,5);
+        Book book = new Book(1,"Java Programming","Vijay Vardhan",2021,5,5,"CS");
         Loan loan = Loan.builder().book(book).issueDate(LocalDate.now()).dueDate(LocalDate.of(2025,3,21)).build();
         smtpService.sendEmail(user,"Book borrowed","Vijoy you have issued a book",loan);
     }
@@ -100,7 +100,7 @@ public class ConfigurationService {
 
     public void saveLibraryConfig(LibraryBookConfig libraryBookConfig) {
         try {
-            JsonNode jsonNode = objectMapper.readTree(libraryBookConfig.toString());
+            JsonNode jsonNode = objectMapper.readTree(objectMapper.writeValueAsString(libraryBookConfig));
             Configuration configuration = configurationRepository.findConfigurationByType(ConfigurationKey.LIBRARY_ISSUE_CONFIG);
             configuration.setData(jsonNode);
             configurationRepository.save(configuration);

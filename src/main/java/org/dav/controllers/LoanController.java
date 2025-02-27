@@ -24,8 +24,8 @@ public class LoanController {
 
     @Secured({ConfigurationKey.ROLE_LIBRARIAN})
     @PostMapping
-    public ResponseEntity<LoanDto> issueBook(@RequestParam("userId") Integer userId,@RequestParam("bookId") Integer bookId){
-        Loan loan = loanService.saveLoan(userId, bookId);
+    public ResponseEntity<LoanDto> issueBook(@RequestParam("email") String email,@RequestParam("bookId") Integer bookId){
+        Loan loan = loanService.saveLoan(email, bookId);
         LoanDto loanDto = LoanDto.of(loan);
         return ResponseEntity.status(HttpStatus.CREATED).body(loanDto);
     }

@@ -1,5 +1,6 @@
 package org.dav.services;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.api.client.http.InputStreamContent;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.auth.http.HttpCredentialsAdapter;
@@ -15,7 +16,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayInputStream;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collections;
@@ -25,11 +25,13 @@ import java.util.Collections;
 public class GoogleDriveService {
     private final ConfigurationRepository configurationRepository;
     private final String folderId;
+    private final ObjectMapper objectMapper;
 
     @Autowired
-    public GoogleDriveService(ConfigurationRepository configurationRepository,@Value("${google.drive.folder}") String folderId) {
+    public GoogleDriveService(ConfigurationRepository configurationRepository, @Value("${google.drive.folder}") String folderId, ObjectMapper objectMapper) {
         this.configurationRepository = configurationRepository;
         this.folderId = folderId;
+        this.objectMapper = objectMapper;
     }
 
     public Drive getDriveService() throws IOException {
@@ -39,9 +41,10 @@ public class GoogleDriveService {
             log.warn("Set up google drive configuration");
             return null;
         }
-        String SERVICE_ACCOUNT_JSON = configuration.getData().asText();
+        byte[] configData = objectMapper.writeValueAsBytes(configuration.getData());
+        InputStream inputStream = new ByteArrayInputStream(configData);
         GoogleCredentials credentials = GoogleCredentials
-                .fromStream(new FileInputStream(SERVICE_ACCOUNT_JSON))
+                .fromStream(inputStream)
                 .createScoped(Collections.singleton(DriveScopes.DRIVE));
 
         return new Drive.Builder(new com.google.api.client.http.javanet.NetHttpTransport(),

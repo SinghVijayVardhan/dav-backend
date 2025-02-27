@@ -26,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 @Service
@@ -79,9 +80,9 @@ public class LoanService {
         return loanRepository.save(loan);
     }
 
-    public Loan saveLoan(Integer bookId, Integer userId){
+    public Loan saveLoan(String email, Integer bookId){
         Book book = bookService.getBookById(bookId);
-        User user = userService.getUserById(userId);
+        User user = userService.getUserByEmail(email);
         return issueBook(book, user);
     }
 
@@ -89,8 +90,13 @@ public class LoanService {
     public Loan submitBook(LoanDto loanDto){
         Optional<Loan> existingLoan = loanRepository.findById(loanDto.getId());
         if(existingLoan.isEmpty())
-            throw new NotFoundException("Loan doesn't exist");
+            throw new NotFoundException("Invalid borrow id : "+loanDto.getId());
         Loan loan = existingLoan.get();
+        calculateFine(loan);
+        if(!loanDto.getFine().equals(loan.getFineAmount()))
+            throw new BadRequestException("Fine amount mismatch");
+        if(loan.getFineAmount()==0 && !loanDto.getFineStatus().equals(FineStatus.none) && loanDto.getFine()>0)
+            throw new BadRequestException("This user has no fine");
         Book book = loan.getBook();
         book.setAvailableCopies(book.getAvailableCopies()+1);
         bookService.saveOrUpdate(book);
@@ -105,7 +111,7 @@ public class LoanService {
 
         Page<Loan> loanPage;
 
-        if (name != null) {
+        if (name != null && !name.isBlank()) {
             if (!user.getAuthorities().equals(Authorities.librarian)) {
                 throw new UnAuthorizedException("Access denied, You are not authorized for this action");
             }
@@ -121,9 +127,21 @@ public class LoanService {
     }
 
     private PageResponse<LoanDto> getLoanDtoPage(Page<Loan> loanPage, Integer page, Integer size) {
-        List<Loan> loans = loanPage.getContent();
+        List<Loan> loans = Optional.of(loanPage.getContent())
+                .orElse(Collections.emptyList());
+        loans.forEach(this::calculateFine);
         List<LoanDto> loanDtos = loans.stream().map(LoanDto::of).toList();
         return new PageResponse<>(page, size, loanPage.getTotalPages(), loanDtos);
     }
 
+    private void calculateFine(Loan loan){
+        LibraryBookConfig config = configurationService.getLibraryConfiguration();
+        Long expectedDays = ChronoUnit.DAYS.between( loan.getDueDate(), loan.getIssueDate());
+        Long daysTillToday = ChronoUnit.DAYS.between(LocalDate.now(), loan.getIssueDate());
+        double fine = (daysTillToday - expectedDays) * config.getFinePerDay();
+        if(fine==0){
+            loan.setFineStatus(FineStatus.none);
+        }
+        loan.setFineAmount(fine);
+    }
 }

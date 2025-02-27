@@ -21,6 +21,7 @@ public class BookDto {
     private Integer id;
     private String title;
     private String author;
+    private String category;
     private Integer publicationYear;
 
     public static BookDto of(Book book){
@@ -29,6 +30,7 @@ public class BookDto {
                 .id(book.getId())
                 .publicationYear(book.getPublicationYear())
                 .title(book.getTitle())
+                .category(book.getCategory())
                 .build();
     }
 

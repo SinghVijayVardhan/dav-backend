@@ -1,5 +1,6 @@
 package org.dav.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.*;
 import org.dav.enums.ReservationStatus;
@@ -27,6 +28,7 @@ public class Reservation {
     @PrimaryKeyJoinColumn
     private Book book;
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     @Column(name = "reservation_date", nullable = false)
     private LocalDate reservationDate;
 

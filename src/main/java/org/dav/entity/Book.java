@@ -26,4 +26,6 @@ public class Book {
     private Integer totalCopies = 1;
     @Column(name = "remaining_copies")
     private Integer availableCopies;
+    @Column(name = "category")
+    private String category;
 }

@@ -17,6 +17,9 @@ public class UserBookDto extends BookDto{
         bookDto.setTitle(book.getTitle());
         bookDto.setAuthor(book.getAuthor());
         bookDto.setPublicationYear(book.getPublicationYear());
+        bookDto.setCategory(book.getCategory());
+        UserBookStatus userBookStatus = book.getAvailableCopies() > 0 ? UserBookStatus.AVAILABLE : UserBookStatus.UNAVAILABLE;
+        bookDto.setStatus(userBookStatus);
         return bookDto;
     }
 

@@ -1,5 +1,6 @@
 package org.dav.modals;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 import org.dav.entity.Loan;
 import org.dav.enums.FineStatus;
@@ -18,9 +19,12 @@ public class LoanDto {
     private String author;
     private Integer publicationYear;
     private Double fine;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate returnDate;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate issueDate;
     private FineStatus fineStatus;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate dueDate;
 
     public static LoanDto of(Loan loan){

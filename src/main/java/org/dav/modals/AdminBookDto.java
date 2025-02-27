@@ -19,6 +19,7 @@ public class AdminBookDto extends BookDto{
         bookDto.setTitle(book.getTitle());
         bookDto.setAuthor(book.getAuthor());
         bookDto.setPublicationYear(book.getPublicationYear());
+        bookDto.setCategory(book.getCategory());
         return bookDto;
     }
 

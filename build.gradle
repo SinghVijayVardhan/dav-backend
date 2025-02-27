@@ -42,8 +42,8 @@ dependencies {
 	implementation 'org.apache.commons:commons-lang3:3.13.0'
 	implementation 'io.jsonwebtoken:jjwt:0.12.3'
 	implementation 'com.google.auth:google-auth-library-oauth2-http:1.22.0'
-	implementation 'com.google.api-client:google-api-client:2.2.0'
-	implementation 'com.google.apis:google-api-services-drive:v3-rev197-1.25.0'
+	implementation group: 'com.google.api-client', name: 'google-api-client', version: '1.15.0-rc'
+	implementation group: 'com.google.apis', name: 'google-api-services-drive', version: 'v3-rev197-1.25.0'
 	//testImplementation 'io.projectreactor:reactor-test'
 	//testImplementation 'org.springframework.security:spring-security-test'
 }

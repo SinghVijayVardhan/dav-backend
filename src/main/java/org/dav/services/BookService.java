@@ -3,6 +3,8 @@ package org.dav.services;
 import org.dav.entity.Book;
 import org.dav.entity.User;
 import org.dav.enums.Authorities;
+import org.dav.enums.ReservationStatus;
+import org.dav.enums.UserBookStatus;
 import org.dav.exception.NotFoundException;
 import org.dav.modals.AdminBookDto;
 import org.dav.modals.BookDto;
@@ -51,16 +53,16 @@ public class BookService {
         bookRepository.save(book);
     }
 
-    public PageResponse<? extends BookDto> getPaginatedBookResponse(String name, Integer page, Integer size) {
+    public PageResponse<? extends BookDto> getPaginatedBookResponse(String name, Integer page, Integer size,String category) {
         User user = null;
         if(CurrentThread.getId()!=null)
             user = userService.getUserById(CurrentThread.getId());
         Pageable pageable = PageRequest.of(page, size);
         Page<Book> books;
         if(name!=null && !name.isBlank()){
-            books = bookRepository.findAllTitleContaining("%"+name+"%", pageable);
+            books = category!=null ? bookRepository.findAllTitleAndCategoryContaining("%"+name+"%", "%"+category+"%", pageable) : bookRepository.findAllTitleContaining("%"+name+"%", pageable);
         }else{
-            books = bookRepository.findAll(pageable);
+            books = category!=null ? bookRepository.findAllCategoryContaining("%"+category+"%", pageable)  : bookRepository.findAll(pageable);
         }
         return getBookDtos(user, books, page, size);
     }
@@ -72,9 +74,34 @@ public class BookService {
         } else if (user.getAuthorities().equals(Authorities.librarian)) {
             bookDtos = books.getContent().stream().map(AdminBookDto::of).toList();
         } else {
-            bookDtos = books.getContent().stream().map(UserBookDto::of).toList();
+            List<Book> issuedBooks = getBooksIssuedByUser(user);
+            List<Book> reservedBooks = getBooksReservedByUser(user);
+            List<UserBookDto> userBookDtos = books.getContent().stream().map(UserBookDto::of).toList();
+            for(Book book : issuedBooks){
+                for(UserBookDto bookDto : userBookDtos){
+                   if(book.getId().equals(bookDto.getId())){
+                       bookDto.setStatus(UserBookStatus.ISSUED);
+                   }
+                }
+            }
+            for(Book book : reservedBooks){
+                for (UserBookDto bookDto : userBookDtos){
+                    if(book.getId().equals(bookDto.getId())){
+                        bookDto.setStatus(UserBookStatus.REGISTERED);
+                    }
+                }
+            }
+            bookDtos = userBookDtos;
         }
         return new PageResponse<>(page, size, books.getTotalPages(), bookDtos);
+    }
+
+    private List<Book> getBooksReservedByUser(User user) {
+        return bookRepository.findAllBookReservedByUserAndStatus(user.getId(), List.of(ReservationStatus.PENDING.name(), ReservationStatus.REJECTED.name()));
+    }
+
+    private List<Book> getBooksIssuedByUser(User user) {
+        return bookRepository.findAllBookIssuedByUser(user.getId());
     }
 
     @Transactional
@@ -120,5 +147,9 @@ public class BookService {
             throw new NotFoundException("Book with ID " + bookId + " not found.");
         }
         bookRepository.deleteById(bookId);
+    }
+
+    public List<String> getCategories(){
+        return bookRepository.findAllCategories();
     }
 }

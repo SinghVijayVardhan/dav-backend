@@ -50,6 +50,7 @@ public class ReservationService {
                 .book(book)
                 .user(user)
                 .reservationDate(LocalDate.now())
+                .status(ReservationStatus.PENDING)
                 .build();
         return reservationRepository.save(reservation);
     }
@@ -84,7 +85,7 @@ public class ReservationService {
 
         Page<Reservation> reservationPage;
 
-        if (name != null) {
+        if (name != null && !name.isBlank()) {
             if (!user.getAuthorities().equals(Authorities.librarian)) {
                 throw new UnAuthorizedException("Access denied, You are not authorized for this action");
             }
@@ -96,10 +97,10 @@ public class ReservationService {
         } else {
             reservationPage = reservationRepository.findAllByUser(user, pageable);
         }
-        return getLoanDtoPage(reservationPage,page,size);
+        return getReservationDtoPage(reservationPage,page,size);
     }
 
-    private PageResponse<ReservationDto> getLoanDtoPage(Page<Reservation> reservationPage, Integer page, Integer size) {
+    private PageResponse<ReservationDto> getReservationDtoPage(Page<Reservation> reservationPage, Integer page, Integer size) {
         List<Reservation> loans = reservationPage.getContent();
         List<ReservationDto> reservationDtos = loans.stream().map(ReservationDto::of).toList();
         return new PageResponse<>(page, size, reservationPage.getTotalPages(), reservationDtos);

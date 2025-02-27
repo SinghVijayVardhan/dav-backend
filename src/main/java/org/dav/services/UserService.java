@@ -51,7 +51,9 @@ public class UserService implements UserDetailsService {
     public UserClaim login(String idToken){
         User user = authService.googleSignIn(idToken);
         try {
-            user = getUserByEmail(user.getEmail());
+            User existingUser = getUserByEmail(user.getEmail());
+            existingUser.setProfilePic(user.getProfilePic());
+            user = save(existingUser);
         }catch(UserNotFoundException exception){
             log.info("Creating user with email : {}",user.getEmail());
             user = save(user);
