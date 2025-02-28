@@ -48,6 +48,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/ui/carousel").permitAll()
                         .requestMatchers(HttpMethod.GET, "/ui/config").permitAll()
                         .requestMatchers(HttpMethod.GET, "/book/categories").permitAll()
+                        .requestMatchers("/file").permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

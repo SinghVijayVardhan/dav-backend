@@ -13,7 +13,6 @@ import java.io.IOException;
 
 @RestController
 @RequestMapping("/file")
-@Secured({ConfigurationKey.ROLE_LIBRARIAN})
 public class GoogleDriveController {
 
     private final GoogleDriveService googleDriveService;
