@@ -39,33 +39,6 @@ public class ConfigurationService {
         this.configurationRepository = configurationRepository;
     }
 
-
-    public List<String> getCarouselImages() throws IOException {
-        Configuration configuration = configurationRepository.findConfigurationByType(ConfigurationKey.CAROUSEL_KEY);
-        if(configuration==null || configuration.getData()==null){
-            throw new NotFoundException("Carousel images are not configured");
-        }
-        TreeMap<Integer, String> images = objectMapper.readValue(configuration.getData().traverse(), new TypeReference<TreeMap<Integer,String>>(){});
-        return images.values().stream().toList();
-    }
-
-    public List<String> saveCarouselImages(List<String> imageUrls) {
-        Map<Integer,String> imageMap = new HashMap<>();
-        for(int i=0; i<imageUrls.size(); i++){
-            imageMap.put(i+1, imageUrls.get(i));
-        }
-        JsonNode jsonNode = objectMapper.valueToTree(imageMap);
-        configurationRepository.save(Configuration.builder().data(jsonNode).type(ConfigurationKey.CAROUSEL_KEY).build());
-        return imageUrls;
-    }
-
-    public void sendEmail() {
-        User user = User.builder().email("vijoybardhan3@gmail.com").firstname("Vijay").build();
-        Book book = new Book(1,"Java Programming","Vijay Vardhan",2021,5,5,"CS");
-        Loan loan = Loan.builder().book(book).issueDate(LocalDate.now()).dueDate(LocalDate.of(2025,3,21)).build();
-        smtpService.sendEmail(user,"Book borrowed","Vijoy you have issued a book",loan);
-    }
-
     public JsonNode getConfigurationByType(String type){
         Configuration configuration = configurationRepository.findConfigurationByType(type);
         if(configuration==null){
@@ -117,5 +90,14 @@ public class ConfigurationService {
             configuration.setData(jsonNode);
         }
         return configurationRepository.save(configuration);
+    }
+
+    public Map<String, JsonNode> getAllConfigurations() {
+        List<Configuration> configurations = configurationRepository.findAll();
+        Map<String, JsonNode> configurationMap =  new HashMap<>();
+        for(Configuration configuration : configurations){
+            configurationMap.put(configuration.getType(), configuration.getData());
+        }
+        return configurationMap;
     }
 }
