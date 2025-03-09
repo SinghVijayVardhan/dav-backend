@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  springboot-app:
+    build: .
+    image: your-springboot-app:latest
+    container_name: springboot-app
+    ports:
+      - "8080:8080"  # Exposing the default port of your Spring Boot app
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-db:3306/library
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      SPRING_PROFILES_ACTIVE: dev  # Or specify any active profile you need
+    depends_on:
+      - mysql-db
+    networks:
+      - app-network
+    restart: unless-stopped
+
+  mysql-db:
+    image: mysql:8.0.33
+    container_name: mysql-db
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: library
+    ports:
+      - "3306:3306"  # Exposing MySQL port (optional if you need access from the host)
+    networks:
+      - app-network
+    volumes:
+      - mysql-data:/var/lib/mysql  # Persist MySQL data
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  mysql-data:
+    driver: local
