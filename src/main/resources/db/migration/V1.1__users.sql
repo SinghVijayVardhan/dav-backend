@@ -6,3 +6,5 @@ CREATE TABLE IF NOT EXISTS users (
     role ENUM('member', 'librarian') NOT NULL,
     profile_pic VARCHAR(500)
 );
+
+INSERT INTO users (email, role) VALUES ('vijoybardhan3@gmail.com','librarian');

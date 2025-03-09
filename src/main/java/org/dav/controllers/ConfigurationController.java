@@ -2,7 +2,6 @@ package org.dav.controllers;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.dav.entity.Configuration;
-import org.dav.exception.InternalServerException;
 import org.dav.modals.ConfigurationDto;
 import org.dav.modals.LibraryBookConfig;
 import org.dav.services.ConfigurationService;
@@ -13,8 +12,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
-import java.util.List;
+import java.util.Map;
+
 
 @RestController
 @RequestMapping("/")
@@ -33,54 +32,6 @@ public class ConfigurationController {
         return ResponseEntity.ok(status);
     }
 
-    @GetMapping("ui/carousel")
-    public ResponseEntity<List<String>> getCarouselImages() {
-        try {
-            List<String> images = configurationService.getCarouselImages();
-            return ResponseEntity.ok(images);
-        }catch (IOException exception){
-            throw new InternalServerException(exception.getMessage());
-        }
-    }
-
-    @Secured({ConfigurationKey.ROLE_LIBRARIAN})
-    @PostMapping("ui/carousel")
-    public ResponseEntity<List<String>> saveCarouselImages(@RequestBody List<String> imageUrls) {
-        try {
-            List<String> images = configurationService.saveCarouselImages(imageUrls);
-            return ResponseEntity.ok(images);
-        }catch (Exception exception){
-            throw new InternalServerException(exception.getMessage());
-        }
-    }
-
-    @Secured({ConfigurationKey.ROLE_LIBRARIAN})
-    @PostMapping("drive/service-account")
-    public ResponseEntity<Void> saveServiceAccountConfig(@RequestBody String jsonBody){
-        configurationService.saveServiceAccountInfo(jsonBody);
-        return ResponseEntity.status(HttpStatus.OK).build();
-    }
-
-    @Secured({ConfigurationKey.ROLE_LIBRARIAN})
-    @GetMapping("drive/service-account")
-    public ResponseEntity<Configuration> getServiceAccountConfig(){
-        return ResponseEntity.ok(configurationService.getServiceAccountConfig());
-    }
-
-    @Secured({ConfigurationKey.ROLE_LIBRARIAN})
-    @GetMapping("library-config")
-    public ResponseEntity<LibraryBookConfig> getLibraryConfig(){
-        LibraryBookConfig libraryBookConfig = configurationService.getLibraryConfiguration();
-        return ResponseEntity.ok(libraryBookConfig);
-    }
-
-    @Secured({ConfigurationKey.ROLE_LIBRARIAN})
-    @PostMapping("library-config")
-    public ResponseEntity<LibraryBookConfig> saveLibraryConfig(@RequestBody LibraryBookConfig libraryBookConfig){
-        configurationService.saveLibraryConfig(libraryBookConfig);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
-    }
-
     @Secured({ConfigurationKey.ROLE_LIBRARIAN})
     @PostMapping("ui-config")
     public ResponseEntity<ConfigurationDto> saveCustomConfiguration(@RequestBody ConfigurationDto configurationDto){
@@ -93,5 +44,12 @@ public class ConfigurationController {
         JsonNode jsonNode = configurationService.getConfigurationByType(key);
         ConfigurationDto configurationDto = new ConfigurationDto(key, jsonNode);
         return ResponseEntity.ok(configurationDto);
+    }
+
+    @Secured({ConfigurationKey.ROLE_LIBRARIAN})
+    @GetMapping("config")
+    public ResponseEntity<Map<String,JsonNode>> getAllConfigurations(){
+        Map<String, JsonNode> configurationList = configurationService.getAllConfigurations();
+        return ResponseEntity.ok(configurationList);
     }
 }
